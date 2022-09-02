@@ -1,0 +1,27 @@
+{
+    "name": "github-profile-screenshot",
+    "version": "1.0.0",
+    "description": "Take a screenshot of your Github profile",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Rushi Vishavadia <rushi@hey.com>",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^16.0.2",
+        "puppeteer": "^17.1.0",
+        "sharp": "^0.30.7"
+    },
+    "prettier": {
+        "semi": true,
+        "printWidth": 120,
+        "trailingComma": "all",
+        "singleQuote": false,
+        "bracketSpacing": true,
+        "useTabs": false,
+        "arrowParens": "always",
+        "bracketSameLine": false,
+        "tabWidth": 4
+    }
+}
