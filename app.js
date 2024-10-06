@@ -3,6 +3,7 @@ require("dotenv").config();
 const puppeteer = require("puppeteer");
 const today = formatDate(new Date());
 const dimensions = { width: 1920, height: 1080 };
+const loadingDelay = 3_000;
 
 const capturePhoto = async () => {
     console.log("1. Initializing browser");
@@ -20,6 +21,8 @@ const capturePhoto = async () => {
     const page = await browser.newPage();
     await page.setViewport(dimensions);
     await page.goto(process.env.GITHUB_URL);
+    console.log(`Waiting for ${loadingDelay} for the page to load`);
+    await new Promise(resolve => setTimeout(resolve, loadingDelay));
     const filename = `screenshots/screenshot-${today}.png`;
     console.log(`3. Taking screenshot to ${filename}`);
     await page.screenshot({ path: filename, fullPage: true });
