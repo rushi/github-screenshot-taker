@@ -4,7 +4,7 @@
     "description": "Take a screenshot of your Github profile",
     "main": "app.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "format": "prettier --write -l *.js"
     },
     "author": "Rushi Vishavadia <rushi@hey.com>",
     "license": "ISC",
@@ -26,5 +26,8 @@
     },
     "allowScripts": {
         "puppeteer@25.3.0": true
+    },
+    "devDependencies": {
+        "prettier": "^3.9.6"
     }
 }
