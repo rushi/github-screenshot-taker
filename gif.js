@@ -6,7 +6,7 @@ const ignoredFiles = [".gitignore", "list.txt", "video.mp4"];
 const run = async () => {
     const rawFiles = fs
         .readdirSync("./screenshots/")
-        .filter((item) => !ignoredFiles.includes(item))
+        .filter((item) => !ignoredFiles.includes(item) && item.startsWith("screenshot-"))
         .map((item) => `screenshots/${item}`);
 
     let filesCropped = 0;
@@ -17,7 +17,7 @@ const run = async () => {
                 .toFile(`./tmp/${rawFile.replace("screenshots/screenshot-", "")}`);
         } catch (e) {
             process.stdout.write("\x1b[2K\r");
-            console.error(`Cannot crop ${rawFile}`);
+            console.log(`Cannot crop ${rawFile}`);
             console.log(e);
         }
 
@@ -26,49 +26,41 @@ const run = async () => {
         process.stdout.write(`${filesCropped}/${rawFiles.length} files cropped...`);
     }
 
-    // Create the temporary list file
-    await fs.writeFileSync("./tmp/list.txt", "");
-
     const croppedFiles = fs
         .readdirSync("./tmp/")
         .filter((item) => !ignoredFiles.includes(item))
-        .map((item) => `./tmp/${item}`)
         .sort((a, b) => {
-            const dateA = new Date(a.replace("./tmp/", "").replace(".png", ""));
-            const dateB = new Date(b.replace("./tmp/", "").replace(".png", ""));
-            return dateB - dateA;
-        })
-        .reverse();
+            const dateA = new Date(a.replace(".png", ""));
+            const dateB = new Date(b.replace(".png", ""));
+            return dateA - dateB;
+        });
 
     fs.mkdirSync("./output", { recursive: true });
 
     const now = new Date().toISOString().slice(0, 10);
-    const filename = `output/video-${now}.mp4`;
-    console.log(`\nGenerating video file ${filename}\n`);
+    const filename = `output/gif-${now}.gif`;
+    const paletteFile = "./tmp/palette.png";
+    const listFile = "./tmp/gif-list.txt";
+
+    fs.writeFileSync(listFile, croppedFiles.map((file) => `file '${file}'`).join("\n"));
+
+    console.log(`\nGenerating gif file ${filename}\n`);
     try {
-        for (const file of croppedFiles) {
-            try {
-                await fs.appendFileSync("./tmp/list.txt", `\nfile '${file.replace("./tmp/", "")}'`);
-                await fs.appendFileSync("./tmp/list.txt", "\nduration 0.10");
-            } catch (e) {
-                console.log(`Cannot write ${file}`);
-            }
-        }
+        execSync(`ffmpeg -y -r 10 -f concat -safe 0 -i ${listFile} -vf palettegen ${paletteFile}`);
+        execSync(`ffmpeg -y -r 10 -f concat -safe 0 -i ${listFile} -i ${paletteFile} -lavfi paletteuse ${filename}`);
 
-        await execSync(`ffmpeg -y -f concat -i ./tmp/list.txt -codec libx264 ${filename}`);
-
-        console.log(`\nDeleting ${croppedFiles.length} temporary files`);
+        console.log(`\nDeleting temporary files`);
         for (const file of fs.readdirSync("./tmp/").filter((item) => item !== ".gitignore")) {
             try {
-                await fs.unlinkSync(`./tmp/${file}`);
+                fs.unlinkSync(`./tmp/${file}`);
             } catch (e) {
                 console.log(`Cannot unlink ${file}`, e);
             }
         }
 
-        console.log(`\nVideo created: ${filename}\n`);
+        console.log(`\nGif created: ${filename}\n`);
     } catch (e) {
-        console.log("Cannot create the video");
+        console.log("Cannot create the gif");
         console.log(e);
     }
 };
