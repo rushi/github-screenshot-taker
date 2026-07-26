@@ -22,7 +22,7 @@ const capturePhoto = async () => {
     await page.setViewport(dimensions);
     await page.goto(process.env.GITHUB_URL);
     console.log(`Waiting for ${loadingDelay} for the page to load`);
-    await new Promise(resolve => setTimeout(resolve, loadingDelay));
+    await new Promise((resolve) => setTimeout(resolve, loadingDelay));
     const filename = `screenshots/screenshot-${today}.png`;
     console.log(`3. Taking screenshot to ${filename}`);
     await page.screenshot({ path: filename, fullPage: true });
