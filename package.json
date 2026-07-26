@@ -9,9 +9,9 @@
     "author": "Rushi Vishavadia <rushi@hey.com>",
     "license": "ISC",
     "dependencies": {
-        "dotenv": "^16.0.2",
-        "puppeteer": "^17.1.0",
-        "sharp": "^0.30.7"
+        "dotenv": "^17.4.2",
+        "puppeteer": "^25.3.0",
+        "sharp": "^0.35.3"
     },
     "prettier": {
         "semi": true,
@@ -23,5 +23,8 @@
         "arrowParens": "always",
         "bracketSameLine": false,
         "tabWidth": 4
+    },
+    "allowScripts": {
+        "puppeteer@25.3.0": true
     }
 }
